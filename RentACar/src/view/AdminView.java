@@ -1,18 +1,27 @@
 package view;
 
-import business.UserManager;
+import entity.User;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class AdminView extends JFrame{
+public class AdminView extends Layout{
     private JPanel container;
+    private JLabel lbl_welcome;
+    private JPanel pnl_top;
+    private JTabbedPane tab_menu;
+    private JButton btn_logout;
+    private JPanel pnl_brand;
+    private JTable tbl_brand;
+    private User user;
 
-    public AdminView() {
-//        this.userManager = new UserManager();
+    public AdminView(User user) {
         this.add(container);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setTitle("Rent a Car");
-        this.setSize(400,400);
+        guiInitialize(1000,500);
+        this.user = user;
+        if (this.user == null){
+            dispose();
+        }
+
+        this.lbl_welcome.setText("Hoşgeldiniz " + this.user.getUsername());
     }
 }
