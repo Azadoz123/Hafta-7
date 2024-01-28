@@ -57,9 +57,11 @@ public class AdminView extends Layout{
 
         this.brandMenu = new JPopupMenu();
         this.brandMenu.add("Yeni").addActionListener(e -> {
-            System.out.println("Yeni butonu tıklandı");
+            BrandView brandView = new BrandView(null);
         });
-        this.brandMenu.add("Güncelle");
+        this.brandMenu.add("Güncelle").addActionListener(e -> {
+            int selectId = tbl_brand.getValueAt(tbl_brand.getSelectedRow(),0)
+        });
         this.brandMenu.add("Sil");
 
         this.tbl_brand.setComponentPopupMenu(brandMenu);
