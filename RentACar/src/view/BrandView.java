@@ -20,13 +20,20 @@ public class BrandView extends Layout{
         this.add(container);
         guiInitialize(300, 200);
         this.brand = brand;
+
+        if(brand != null){
+            this.fld_brand_name.setText(this.brand.getName());
+        }
         btn_brand_save.addActionListener(e -> {
             if (Helper.isFieldEmpty(this.fld_brand_name)){
                 Helper.showMessage("fill");
             }else {
-                boolean result = true;
+                boolean result;
                 if(this.brand == null){
                     result = this.brandManager.save(new Brand(fld_brand_name.getText()));
+                }else {
+                    this.brand.setName(fld_brand_name.getText());
+                    result = this.brandManager.update(this.brand);
                 }
                 if(result){
                     Helper.showMessage("done");

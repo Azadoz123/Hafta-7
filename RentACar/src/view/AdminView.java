@@ -1,14 +1,13 @@
 package view;
 
 import business.BrandManager;
+import core.Helper;
 import entity.Brand;
 import entity.User;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class AdminView extends Layout{
@@ -34,18 +33,13 @@ public class AdminView extends Layout{
         }
 
         this.lbl_welcome.setText("Hoşgeldiniz " + this.user.getUsername());
+        loadBrandTable();
+        loadBrandComponent();
 
-        Object[] col_brand = {"Marka ID", "Marka Adı"};
-        ArrayList<Brand> brandArrayList = brandManager.findAll();
-        this.t_mdl_brand.setColumnIdentifiers(col_brand);
-        for (Brand brand: brandArrayList){
-            Object[] obj = {brand.getId(), brand.getName()};
-            t_mdl_brand.addRow(obj);
-        }
+        this.tbl_brand.setComponentPopupMenu(brandMenu);
+    }
 
-        this.tbl_brand.setModel(t_mdl_brand);
-        this.tbl_brand.getTableHeader().setReorderingAllowed(false);
-        this.tbl_brand.setEnabled(false);
+    private void loadBrandComponent() {
         this.tbl_brand.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -58,12 +52,41 @@ public class AdminView extends Layout{
         this.brandMenu = new JPopupMenu();
         this.brandMenu.add("Yeni").addActionListener(e -> {
             BrandView brandView = new BrandView(null);
+            brandView.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadBrandTable();
+                }
+            });
         });
         this.brandMenu.add("Güncelle").addActionListener(e -> {
-            int selectId = tbl_brand.getValueAt(tbl_brand.getSelectedRow(),0)
+            int selectedBrandId = this.getTableSelectedRow(tbl_brand,0);
+            BrandView brandView = new BrandView(this.brandManager.getById(selectedBrandId));
+            brandView.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadBrandTable();
+                }
+            });
         });
-        this.brandMenu.add("Sil");
+        this.brandMenu.add("Sil").addActionListener(e ->{
+            if(Helper.confirm("sure")){
+                int selectedBrandId = this.getTableSelectedRow(tbl_brand,0);
+                if(this.brandManager.delete(selectedBrandId)){
+                    Helper.showMessage("done");
+                    loadBrandTable();
+                }else {
+                    Helper.showMessage("error");
+                }
+            }
 
-        this.tbl_brand.setComponentPopupMenu(brandMenu);
+        });
     }
+
+    public void loadBrandTable(){
+        Object[] col_brand = {"Marka ID", "Marka Adı"};
+        ArrayList<Object[]> brandList = this.brandManager.getForTable(col_brand.length);
+        this.createTable(this.t_mdl_brand,this.tbl_brand,col_brand,brandList);
+    }
+
 }
