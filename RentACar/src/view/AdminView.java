@@ -1,8 +1,8 @@
 package view;
 
 import business.BrandManager;
+import business.ModelManager;
 import core.Helper;
-import entity.Brand;
 import entity.User;
 
 import javax.swing.*;
@@ -18,13 +18,19 @@ public class AdminView extends Layout{
     private JButton btn_logout;
     private JPanel pnl_brand;
     private JTable tbl_brand;
+    private JPanel pnl_model;
+    private JTable tbl_model;
     private User user;
     private DefaultTableModel t_mdl_brand = new DefaultTableModel();
-    private JPopupMenu brandMenu;
-
+    private DefaultTableModel t_mdl_model = new DefaultTableModel();
+    private JPopupMenu brand_menu;
+    private JPopupMenu model_menu;
     private BrandManager brandManager;
+    private ModelManager modelManager;
     public AdminView(User user) {
         this.brandManager = new BrandManager();
+        this.modelManager = new ModelManager();
+
         this.add(container);
         guiInitialize(1000,500);
         this.user = user;
@@ -35,8 +41,30 @@ public class AdminView extends Layout{
         this.lbl_welcome.setText("Hoşgeldiniz " + this.user.getUsername());
         loadBrandTable();
         loadBrandComponent();
+        
+        loadModelTable();
+        loadModelComponent();
+    }
 
-        this.tbl_brand.setComponentPopupMenu(brandMenu);
+    private void loadModelComponent() {
+        tableRowSelected(tbl_model);
+        this.model_menu = new JPopupMenu();
+        this.model_menu.add("Yeni").addActionListener(e -> {
+
+        });
+        this.model_menu.add("Güncelle").addActionListener(e -> {
+
+        });
+        this.model_menu.add("Sil").addActionListener(e ->{
+
+        });
+        this.tbl_model.setComponentPopupMenu(model_menu);
+    }
+
+    private void loadModelTable() {
+        Object[] col_model = {"Model ID", "Marka", "Model Adı", "Tip", "Yıl", "Yakıt Türü", "Vites"};
+        ArrayList<Object[]> modelList = this.modelManager.getForTable(col_model.length, this.modelManager.findAll());
+        this.createTable(this.t_mdl_model,this.tbl_model,col_model,modelList);
     }
 
     private void loadBrandComponent() {
@@ -49,8 +77,8 @@ public class AdminView extends Layout{
             }
         });
 
-        this.brandMenu = new JPopupMenu();
-        this.brandMenu.add("Yeni").addActionListener(e -> {
+        this.brand_menu = new JPopupMenu();
+        this.brand_menu.add("Yeni").addActionListener(e -> {
             BrandView brandView = new BrandView(null);
             brandView.addWindowListener(new WindowAdapter() {
                 @Override
@@ -59,7 +87,7 @@ public class AdminView extends Layout{
                 }
             });
         });
-        this.brandMenu.add("Güncelle").addActionListener(e -> {
+        this.brand_menu.add("Güncelle").addActionListener(e -> {
             int selectedBrandId = this.getTableSelectedRow(tbl_brand,0);
             BrandView brandView = new BrandView(this.brandManager.getById(selectedBrandId));
             brandView.addWindowListener(new WindowAdapter() {
@@ -69,7 +97,7 @@ public class AdminView extends Layout{
                 }
             });
         });
-        this.brandMenu.add("Sil").addActionListener(e ->{
+        this.brand_menu.add("Sil").addActionListener(e ->{
             if(Helper.confirm("sure")){
                 int selectedBrandId = this.getTableSelectedRow(tbl_brand,0);
                 if(this.brandManager.delete(selectedBrandId)){
@@ -81,6 +109,7 @@ public class AdminView extends Layout{
             }
 
         });
+        this.tbl_brand.setComponentPopupMenu(brand_menu);
     }
 
     public void loadBrandTable(){

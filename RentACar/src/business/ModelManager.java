@@ -1,5 +1,6 @@
 package business;
 
+import core.Helper;
 import dao.ModelDao;
 import entity.Model;
 
@@ -28,5 +29,26 @@ public class ModelManager {
             modelObjList.add(rowObject);
         }
         return modelObjList;
+    }
+    public boolean save (Model model){
+        if(this.getById(model.getId()) != null){
+            Helper.showMessage("error");
+            return false;
+        }
+        return this.modelDao.save(model);
+    }
+    public boolean update(Model model){
+        if(this.getById(model.getId()) == null){
+            Helper.showMessage(model.getId() + " ID kayıtlı model bulunamadı !");
+            return false;
+        }
+        return this.modelDao.update(model);
+    }
+    public boolean delete(int id){
+        if(this.getById(id) == null){
+            Helper.showMessage(id + " ID kayıtlı model bulunamadı !");
+            return false;
+        }
+        return this.modelDao.delete(id);
     }
 }
