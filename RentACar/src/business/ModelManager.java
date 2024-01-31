@@ -51,4 +51,7 @@ public class ModelManager {
         }
         return this.modelDao.delete(id);
     }
+    public ArrayList<Model> getByListBrandId(int brandId){
+        return this.modelDao.getByListBrandId(brandId);
+    }
 }

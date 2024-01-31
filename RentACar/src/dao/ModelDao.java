@@ -32,6 +32,10 @@ public class ModelDao {
     public ArrayList<Model> findAll(){
         return selectByQuery("SELECT * FROM public.model ORDER BY model_id ASC");
     }
+    public ArrayList<Model> getByListBrandId(int brandId){
+        return selectByQuery("SELECT * FROM public.model WHERE model_brand_id = " + brandId + " ORDER BY model_id ASC");
+    }
+
     public ArrayList<Model> selectByQuery(String query){
         ArrayList<Model> modelList = new ArrayList<>();
         try {
@@ -52,13 +56,13 @@ public class ModelDao {
                 "model_type," +
                 "model_year," +
                 "model_fuel," +
-                "model_gear," +
+                "model_gear" +
                 ")" +
                 " VALUES(?,?,?,?,?,?)";
 
         try {
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-            preparedStatement.setInt(1,model.getId());
+            preparedStatement.setInt(1,model.getBrand_id());
             preparedStatement.setString(2,model.getName());
             preparedStatement.setString(3,model.getType().toString());
             preparedStatement.setString(4,model.getYear());
@@ -71,25 +75,24 @@ public class ModelDao {
 
     }
     public boolean update(Model model){
-        String query = "UPDATE public.model SET" +
-                "(" +
+        String query = "UPDATE public.model SET " +
                 "model_brand_id = ?," +
                 "model_name = ?," +
                 "model_type = ?," +
                 "model_year = ?," +
                 "model_fuel = ?," +
                 "model_gear = ?" +
-                ")" +
-                " VALUES(?,?,?,?,?,?)";
+                " WHERE model_id = ?";
 
         try {
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-            preparedStatement.setInt(1,model.getId());
+            preparedStatement.setInt(1,model.getBrand_id());
             preparedStatement.setString(2,model.getName());
             preparedStatement.setString(3,model.getType().toString());
             preparedStatement.setString(4,model.getYear());
             preparedStatement.setString(5,model.getFuel().toString());
             preparedStatement.setString(6,model.getGear().toString());
+            preparedStatement.setInt(7,model.getId());
             return preparedStatement.executeUpdate() != -1;
         } catch (SQLException e) {
             throw new RuntimeException(e);

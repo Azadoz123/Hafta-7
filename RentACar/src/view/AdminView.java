@@ -3,12 +3,14 @@ package view;
 import business.BrandManager;
 import business.ModelManager;
 import core.Helper;
+import entity.Model;
 import entity.User;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
 import java.util.ArrayList;
+
 
 public class AdminView extends Layout{
     private JPanel container;
@@ -20,6 +22,11 @@ public class AdminView extends Layout{
     private JTable tbl_brand;
     private JPanel pnl_model;
     private JTable tbl_model;
+    private JComboBox cmb_s_model_brand;
+    private JComboBox cmb_s_model_type;
+    private JComboBox cmb_s_model_fuel;
+    private JComboBox cmb_s_model_gear;
+    private JButton aramaYapButton;
     private User user;
     private DefaultTableModel t_mdl_brand = new DefaultTableModel();
     private DefaultTableModel t_mdl_model = new DefaultTableModel();
@@ -50,12 +57,34 @@ public class AdminView extends Layout{
         tableRowSelected(tbl_model);
         this.model_menu = new JPopupMenu();
         this.model_menu.add("Yeni").addActionListener(e -> {
-
+            ModelView modelView = new ModelView(new Model());
+           modelView.addWindowListener(new WindowAdapter() {
+               @Override
+               public void windowClosed(WindowEvent e) {
+                   loadModelTable();
+               }
+           });
         });
         this.model_menu.add("Güncelle").addActionListener(e -> {
-
+            int selectedModelId = this.getTableSelectedRow(tbl_model,0);
+            ModelView modelView = new ModelView(this.modelManager.getById(selectedModelId));
+            modelView.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    loadModelTable();
+                }
+            });
         });
         this.model_menu.add("Sil").addActionListener(e ->{
+            if(Helper.confirm("sure")){
+                int selectedModelId = this.getTableSelectedRow(tbl_model,0);
+                if(this.modelManager.delete(selectedModelId)){
+                    Helper.showMessage("done");
+                    loadModelTable();
+                }else {
+                    Helper.showMessage("error");
+                }
+            }
 
         });
         this.tbl_model.setComponentPopupMenu(model_menu);
@@ -84,6 +113,7 @@ public class AdminView extends Layout{
                 @Override
                 public void windowClosed(WindowEvent e) {
                     loadBrandTable();
+                    loadModelTable();
                 }
             });
         });
@@ -94,6 +124,7 @@ public class AdminView extends Layout{
                 @Override
                 public void windowClosed(WindowEvent e) {
                     loadBrandTable();
+                    loadModelTable();
                 }
             });
         });
@@ -103,6 +134,7 @@ public class AdminView extends Layout{
                 if(this.brandManager.delete(selectedBrandId)){
                     Helper.showMessage("done");
                     loadBrandTable();
+                    loadModelTable();
                 }else {
                     Helper.showMessage("error");
                 }
