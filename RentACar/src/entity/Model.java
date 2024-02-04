@@ -1,5 +1,7 @@
 package entity;
 
+import core.ComboItem;
+
 import java.lang.reflect.Type;
 
 public class Model {
@@ -10,6 +12,7 @@ public class Model {
     private Type type;
     private Fuel fuel;
     private Gear gear;
+    private ComboItem comboItem;
     private Brand brand;
     public enum Fuel{
         GASOLINE,
@@ -83,6 +86,10 @@ public class Model {
 
     public void setGear(Gear gear) {
         this.gear = gear;
+    }
+
+    public ComboItem getComboItem() {
+        return new ComboItem(this.getId(), this.getBrand().getName() + " - "+ this.getName() + " - " + this.getYear());
     }
 
     public Brand getBrand() {
