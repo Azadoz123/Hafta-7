@@ -4,6 +4,7 @@ import core.Db;
 import entity.Book;
 import entity.Car;
 
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class BookDao {
         this.carDao = new CarDao();
     }
     public ArrayList<Book> findAll(){
-        return selectByQuery("SELECT * FROM public.car ORDER BY book_id ASC");
+        return selectByQuery("SELECT * FROM public.book ORDER BY book_id ASC");
     }
     public ArrayList<Book> selectByQuery(String query){
         ArrayList<Book> bookList = new ArrayList<>();
@@ -38,13 +39,14 @@ public class BookDao {
                 "book_name," +
                 "book_idno," +
                 "book_mail," +
+                "book_mpno," +
                 "book_strt_date," +
                 "book_fnsh_date," +
                 "book_prc," +
                 "book_case," +
                 "book_note" +
                 ")" +
-                " VALUES(?,?,?,?,?,?,?,?,?)";
+                " VALUES(?,?,?,?,?,?,?,?,?,?)";
 
         try {
             PreparedStatement preparedStatement = this.connection.prepareStatement(query);
@@ -58,6 +60,30 @@ public class BookDao {
             preparedStatement.setInt(8,book.getPrice());
             preparedStatement.setString(9,book.getbCase());
             preparedStatement.setString(10,book.getNote());
+            return preparedStatement.executeUpdate() != -1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public Book getById(int id){
+        Book book = null;
+        String query = "SELECT * FROM public.book WHERE book_id = ?";
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setInt(1,id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()) book = this.match(resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return book;
+    }
+    public boolean delete(int id){
+        String query = "DELETE FROM public.book WHERE book_id = ?";
+        try {
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
+            preparedStatement.setInt(1,id);
             return preparedStatement.executeUpdate() != -1;
         } catch (SQLException e) {
             throw new RuntimeException(e);

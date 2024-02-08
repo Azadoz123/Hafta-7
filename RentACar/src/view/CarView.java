@@ -37,7 +37,7 @@ public class CarView extends Layout{
             this.cmb_model.getModel().setSelectedItem(selectedItem);
             this.cmb_color.getModel().setSelectedItem(car.getColor());
             this.fld_plate.setText(car.getPlate());
-            this.lbl_kn.setText(Integer.toString(car.getKm()));
+            this.fld_km.setText(Integer.toString(car.getKm()));
         }
 
         this.btn_car_save.addActionListener(e -> {
@@ -49,6 +49,7 @@ public class CarView extends Layout{
                 this.car.setModel_id(selectedModel.getKey());
                 this.car.setColor((Car.Color) cmb_color.getSelectedItem());
                 this.car.setPlate(this.fld_plate.getText());
+                this.car.setKm(Integer.parseInt(this.fld_km.getText()));
                 if(this.car.getId() != 0){
                     result = this.carManager.update(this.car);
                 }else{
